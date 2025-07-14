@@ -7,8 +7,14 @@
   <meta name="description" content="Kupuj i sprzedawaj najlepsze prompty do AI."/>
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
   <style>
-    :root{--glass:rgba(255,255,255,.08);--neon:#00ffe0;--radius:12px;font-family:Inter,system-ui,sans-serif}
-    *{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --glass:rgba(255,255,255,.08);
+      --neon:#00ffe0;
+      --pink:#ff00ff;
+      --radius:12px;
+      --font:'Inter',system-ui,sans-serif;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;font-family:var(--font)}
     body{background:#111;color:#eee;min-height:100vh;transition:background .3s,color .3s}
     header{position:fixed;top:0;left:0;right:0;padding:.75rem 1rem;backdrop-filter:blur(12px);background:var(--glass);z-index:10;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--glass)}
     header .logo{height:32px;fill:var(--neon)}
@@ -17,23 +23,31 @@
     .theme-toggle{cursor:pointer;color:#eee;font-size:1.25rem}
     #hero{height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;text-align:center;padding:0 1rem}
     #hero canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
-    #hero h1{z-index:1;font-size:clamp(1.6rem,5vw,3.2rem);background:linear-gradient(90deg,var(--neon),#ff00ff);-webkit-background-clip:text;color:transparent}
-    .cta{z-index:1;margin-top:2rem;background:var(--neon);color:#111;font-weight:700;padding:.75rem 1.5rem;border:none;border-radius:9999px;cursor:pointer}
+    #hero h1{z-index:1;font-size:clamp(1.6rem,5vw,3.2rem);background:linear-gradient(90deg,var(--neon),var(--pink));-webkit-background-clip:text;color:transparent}
+    .cta{z-index:1;margin-top:2rem;background:var(--neon);color:#111;font-weight:700;padding:.75rem 1.5rem;border:none;border-radius:9999px;cursor:pointer;transition:transform .2s}
+    .cta:hover{transform:scale(1.05)}
     .glass{background:var(--glass);border:1px solid rgba(255,255,255,.15);border-radius:var(--radius);backdrop-filter:blur(8px)}
     .search-bar{max-width:600px;margin:2rem auto;display:flex;padding:0 1rem}
     .search-bar input{flex:1;padding:.75rem 1rem;border:none;border-radius:9999px 0 0 9999px;background:#222;color:#eee}
     .search-bar button{border:none;padding:.75rem 1rem;border-radius:0 9999px 9999px 0;background:var(--neon);color:#111;font-weight:700;cursor:pointer}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;padding:1rem 2rem}
-    .card{overflow:hidden;transition:transform .2s}
+    .card{overflow:hidden;transition:transform .2s;background:var(--glass)}
     .card:hover{transform:translateY(-4px)}
     .card img{width:100%;height:160px;object-fit:cover;display:block}
     .card-body{padding:1rem}
     .card h3{font-size:1.1rem;margin-bottom:.5rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .card .price{font-weight:700;color:var(--neon)}
+    .card .tag{background:#222;color:#eee;font-size:.7rem;padding:.2rem .6rem;border-radius:9999px;margin-right:.3rem}
+    .card .prompt-text{font-size:.8rem;color:#bbb;margin:.5rem 0;white-space:pre-wrap}
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center}
+    .modal-content{background:#1a1a1a;padding:2rem;border-radius:var(--radius);max-width:500px;width:90%}
+    .modal-content input,.modal-content textarea{width:100%;padding:.5rem;margin:.5rem 0;background:#222;color:#eee;border:none;border-radius:4px}
+    .modal-content button{margin-top:1rem}
     footer{text-align:center;padding:2rem 1rem;font-size:.875rem;color:#666}
     body.light{background:#fafafa;color:#111}
     body.light header{background:rgba(0,0,0,.05)}
     body.light .search-bar input{background:#eee;color:#111}
+    body.light .card .tag{background:#e5e5e5;color:#111}
   </style>
 </head>
 <body>
@@ -42,7 +56,7 @@
   <nav>
     <a href="#kategorie">Kategorie</a>
     <a href="#top100">Top 100</a>
-    <a href="#sell">Sprzedaj</a>
+    <button class="cta" onclick="openSellModal()">Sprzedaj prompt</button>
     <span class="theme-toggle material-icons" aria-label="Przełącz motyw">light_mode</span>
   </nav>
 </header>
@@ -51,27 +65,27 @@
   <section id="hero">
     <canvas id="hero-canvas"></canvas>
     <h1>KUPUJ · SPRZEDAWAJ · ZARABIAJ PROMPTAMI</h1>
-    <button class="cta" onclick="document.getElementById('sell').scrollIntoView({behavior:'smooth'})">
-      Dodaj swój prompt za darmo
-    </button>
   </section>
 
   <section class="search-bar">
     <input id="search" type="text" placeholder="Szukaj promptów…"/>
-    <button onclick="alert('Wyszukiwanie: '+document.getElementById('search').value)">🔍</button>
+    <button onclick="filterPrompts()">🔍</button>
   </section>
 
+  <!-- KATEGORIE -->
   <section id="kategorie">
+    <h2 style="padding:2rem 2rem .5rem;font-size:1.4rem;">Kategorie</h2>
     <div class="grid">
-      <div class="card glass"><div class="card-body"><h3>Copywriting</h3><p>1 230 promptów</p></div></div>
-      <div class="card glass"><div class="card-body"><h3>Midjourney</h3><p>2 450 promptów</p></div></div>
-      <div class="card glass"><div class="card-body"><h3>Programowanie</h3><p>980 promptów</p></div></div>
-      <div class="card glass"><div class="card-body"><h3>Marketing</h3><p>1 100 promptów</p></div></div>
-      <div class="card glass"><div class="card-body"><h3>Edukacja</h3><p>760 promptów</p></div></div>
-      <div class="card glass"><div class="card-body"><h3>Life-hacki</h3><p>540 promptów</p></div></div>
+      <div class="card glass" data-cat="copy"><div class="card-body"><h3>Copywriting</h3><p>1 230 promptów</p></div></div>
+      <div class="card glass" data-cat="mid"><div class="card-body"><h3>Midjourney</h3><p>2 450 promptów</p></div></div>
+      <div class="card glass" data-cat="code"><div class="card-body"><h3>Programowanie</h3><p>980 promptów</p></div></div>
+      <div class="card glass" data-cat="mkt"><div class="card-body"><h3>Marketing</h3><p>1 100 promptów</p></div></div>
+      <div class="card glass" data-cat="edu"><div class="card-body"><h3>Edukacja</h3><p>760 promptów</p></div></div>
+      <div class="card glass" data-cat="life"><div class="card-body"><h3>Life-hacki</h3><p>540 promptów</p></div></div>
     </div>
   </section>
 
+  <!-- TOP 100 -->
   <section id="top100">
     <h2 style="padding:2rem 2rem .5rem;font-size:1.4rem;">Top 100 promptów</h2>
     <div class="grid" id="prompt-grid"></div>
@@ -82,6 +96,27 @@
   © 2024 prompt-baza.pl – Największa Polska Baza Promptów
 </footer>
 
+<!-- MODAL SPRZEDAŻY -->
+<div class="modal" id="sellModal">
+  <div class="modal-content glass">
+    <h2>Dodaj swój prompt na sprzedaż</h2>
+    <input id="sellTitle" placeholder="Tytuł promptu"/>
+    <textarea id="sellPrompt" rows="4" placeholder="Treść / prompt"></textarea>
+    <input id="sellPrice" type="number" placeholder="Cena w zł"/>
+    <select id="sellCat">
+      <option value="copy">Copywriting</option>
+      <option value="mid">Midjourney</option>
+      <option value="code">Programowanie</option>
+      <option value="mkt">Marketing</option>
+      <option value="edu">Edukacja</option>
+      <option value="life">Life-hacki</option>
+    </select>
+    <button class="cta" onclick="addPrompt()">Dodaj</button>
+    <button onclick="closeSellModal()">Anuluj</button>
+  </div>
+</div>
+
+<!-- THREE.JS HERO -->
 <script type="module">
 import * as THREE from 'https://unpkg.com/three@0.160.0/build/three.module.js';
 const scene=new THREE.Scene();
@@ -110,12 +145,70 @@ addEventListener('resize',()=>{
 </script>
 
 <script>
-// theme toggle
+/* === PROMPTY (przykładowe) === */
+const allPrompts=[
+  {title:"Instagram Reel Hook",cat:"copy",price:9.90,prompt:"Napisz 5 kreatywnych hooków do Reels na temat [TEMAT] w tonie [TON]."},
+  {title:"Midjourney Portraiture",cat:"mid",price:14.50,prompt:"/imagine prompt: ultra-realistic portrait of [OSOBA], soft cinematic light, 85 mm --ar 2:3 --v 5"},
+  {title:"React Hook – useDebounce",cat:"code",price:19.00,prompt:"Napisz custom hook useDebounce(value,delay) w TypeScript z cleanup."},
+  {title:"TikTok Ad Script",cat:"mkt",price:12.00,prompt:"Stwórz 15-sekundowy scenariusz TikTok Ads dla [PRODUKT] z CTA."},
+  {title:"Plan nauki na 7 dni",cat:"edu",price:7.50,prompt:"Wygeneruj 7-dniowy plan nauki języka [JĘZYK] dla początkujących."},
+  {title:"Life Hack – Excel",cat:"life",price:4.99,prompt:"Podaj 10 mniej znanych skrótów klawiszowych w Excel, które oszczędzają czas."},
+  {title:"SEO Meta Title",cat:"copy",price:8.00,prompt:"Wygeneruj 5 meta-tytułów (60 znaków) dla strony oferującej [USŁUGA]."},
+  {title:"Stable Diffusion Prompt",cat:"mid",price:11.00,prompt:"fantasy castle on floating island, 4k, detailed, vibrant, artstation --ar 16:9"},
+  {title:"Next.js Middleware",cat:"code",price:22.00,prompt:"Przykład middleware w Next.js 14 zabezpieczający trasę admin."},
+  {title:"Email Welcome Series",cat:"mkt",price:15.00,prompt:"Przygotuj 3-mailowy welcome series dla nowych subskrybentów [BRANŻA]."},
+  {title:"Quiz – Gramatyka Ang.",cat:"edu",price:6.50,prompt:"Stwórz 10 pytań quizowych dla poziomu B1 z kluczem odpowiedzi."},
+  {title:"Notion Template – GTD",cat:"life",price:9.00,prompt:"Szablon Notion dla systemu Getting Things Done (GTD)."}
+];
+
+function renderPrompts(list){
+  const grid=document.getElementById('prompt-grid');
+  grid.innerHTML='';
+  list.forEach(p=>{
+    const div=document.createElement('div');
+    div.className='card glass';
+    div.innerHTML=`
+      <img src="data:image/svg+xml,${encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'><rect width='400' height='225' fill='%23001122'/><text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='%2300ffe0' font-size='36'>${p.title.slice(0,1)}</text></svg>`
+      )}"/>
+      <div class="card-body">
+        <h3>${p.title}</h3>
+        <p class="tag">${p.cat}</p>
+        <p class="price">${p.price.toFixed(2)} zł</p>
+        <div class="prompt-text">${p.prompt}</div>
+        <button class="cta" style="width:100%;margin-top:.5rem">Kup teraz</button>
+      </div>`;
+    grid.appendChild(div);
+  });
+}
+renderPrompts(allPrompts);
+
+/* === FILTR === */
+function filterPrompts(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const filtered=allPrompts.filter(p=>p.title.toLowerCase().includes(q)||p.cat.toLowerCase().includes(q));
+  renderPrompts(filtered);
+}
+
+/* === MODAL === */
+function openSellModal(){document.getElementById('sellModal').style.display='flex';}
+function closeSellModal(){document.getElementById('sellModal').style.display='none';}
+function addPrompt(){
+  const t=document.getElementById('sellTitle').value.trim();
+  const p=document.getElementById('sellPrompt').value.trim();
+  const pr=parseFloat(document.getElementById('sellPrice').value);
+  const c=document.getElementById('sellCat').value;
+  if(!t||!p||!pr) return alert('Uzupełnij wszystkie pola!');
+  allPrompts.unshift({title:t,cat:c,price:pr,prompt:p});
+  renderPrompts(allPrompts);
+  closeSellModal();
+}
+
+/* === MOTYW === */
 const toggle=document.querySelector('.theme-toggle');
-const body=document.body;
 toggle.addEventListener('click',()=>{
-  body.classList.toggle('light');
-  toggle.textContent=body.classList.contains('light')?'dark_mode':'light_mode';
+  document.body.classList.toggle('light');
+  toggle.textContent=document.body.classList.contains('light')?'dark_mode':'light_mode';
 });
 </script>
 </body>
