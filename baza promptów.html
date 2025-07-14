@@ -1,0 +1,174 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2575.6">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="pl"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8"/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;prompt-baza.pl – Największa Polska Baza Promptów&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width,initial-scale=1"/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="description" content="Kupuj i sprzedawaj najlepsze prompty do AI."/&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Netlify Identity (opcjonalnie, do logowania) --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://identity.netlify.com/v1/netlify-identity-widget.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Three.js dla hero --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script src="https://unpkg.com/three@0.160.0/build/three.min.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- ikonki --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>:root {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--glass: rgba(255,255,255,0.08);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>--neon: #00ffe0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>*{box-sizing:border-box;margin:0;padding:0;font-family:Inter,system-ui,sans-serif}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body{background:#111;color:#eee;min-height:100vh}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>header{position:fixed;top:0;left:0;right:0;padding:.75rem 1rem;backdrop-filter:blur(12px);background:var(--glass);z-index:10;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--glass)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>header img.logo{height:32px}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>nav a{margin:0 .5rem;color:#eee;text-decoration:none;font-weight:500}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.theme-toggle{cursor:pointer}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#hero{height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#hero canvas{position:absolute;top:0;left:0;z-index:0}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>#hero h1{z-index:1;font-size:clamp(1.6rem,4vw,3rem);background:linear-gradient(90deg,var(--neon),#ff00ff);-webkit-background-clip:text;color:transparent}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.cta{z-index:1;margin-top:2rem;background:var(--neon);color:#111;font-weight:700;padding:.75rem 1.5rem;border:none;border-radius:9999px;cursor:pointer;font-size:1rem}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.glass{background:var(--glass);border:1px solid rgba(255,255,255,.1);border-radius:12px;backdrop-filter:blur(8px)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.search-bar{max-width:600px;margin:2rem auto;display:flex}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.search-bar input{flex:1;padding:.75rem 1rem;border:none;border-radius:9999px 0 0 9999px;background:#222;color:#eee}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.search-bar button{border:none;padding:.75rem 1rem;border-radius:0 9999px 9999px 0;background:var(--neon);color:#111;font-weight:700;cursor:pointer}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1.5rem;padding:1rem}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card{overflow:hidden}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card img{width:100%;height:160px;object-fit:cover;display:block}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card-body{padding:1rem}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card h3{font-size:1.1rem;margin-bottom:.5rem;white-space:nowrap;overflow:hidden}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.card .price{font-weight:700;color:var(--neon)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>footer{text-align:center;padding:2rem 1rem;font-size:.875rem;color:#666}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>/* dark/light */</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body.light{background:#fafafa;color:#111}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body.light header{background:rgba(0,0,0,.05)}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body.light .search-bar input{background:#eee;color:#111}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;header&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;img class="logo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 40'%3E%3Ctext y='30' x='5' fill='%2300ffe0' font-size='28' font-family='Arial' font-weight='bold'%3Eprompt-baza.pl%3C/text%3E%3C/svg%3E" alt="logo"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;a href="#kategorie"&gt;Kategorie&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;a href="#top100"&gt;Top 100&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;a href="#sell"&gt;Sprzedaj&lt;/a&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;span class="theme-toggle material-icons" onclick="toggleTheme()"&gt;light_mode&lt;/span&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/nav&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/header&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section id="hero"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;canvas id="hero-canvas"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;KUPUJ. SPRZEDAWAJ. ZARABIAJ PROMPTAMI.&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="cta" onclick="scrollToSection('#sell')"&gt;Dodaj swój prompt za darmo&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section class="search-bar"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;input id="search" type="text" placeholder="Szukaj promptów… (np. midjourney portret)"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button onclick="searchPrompts()"&gt;🔍&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section id="kategorie" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 6 kart kategorii --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Copywriting&lt;/h3&gt;&lt;p&gt;1 230 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Midjourney&lt;/h3&gt;&lt;p&gt;2 450 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Programowanie&lt;/h3&gt;&lt;p&gt;980 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Marketing&lt;/h3&gt;&lt;p&gt;1 100 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Edukacja&lt;/h3&gt;&lt;p&gt;760 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="card glass"&gt;&lt;div class="card-body"&gt;&lt;h3&gt;Life-hacki&lt;/h3&gt;&lt;p&gt;540 promptów&lt;/p&gt;&lt;/div&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;section id="top100" class="grid"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 12 przykładowych kart promptów --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- każdy obrazek = inline SVG placeholder --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- data są fake, ale możesz podmienić na prawdziwe z Netlify Functions --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;footer&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>© 2024 prompt-baza.pl – Największa Polska Baza Promptów&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div data-netlify-identity-menu&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/footer&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- Netlify Identity --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (window.netlifyIdentity) {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>window.netlifyIdentity.on("init", user =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>if (!user) { window.netlifyIdentity.on("login",()=&gt;location.reload()); }</p>
+<p class="p1"><span class="Apple-converted-space">      </span>});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- THREE.JS HERO --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const scene = new THREE.Scene();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const camera = new THREE.PerspectiveCamera(75, innerWidth/innerHeight, .1, 1000);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const renderer = new THREE.WebGLRenderer({canvas: document.getElementById('hero-canvas'), alpha:true});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>renderer.setSize(innerWidth, innerHeight);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const geo = new THREE.BoxGeometry(.6,.6,.6);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const mat = new THREE.MeshBasicMaterial({color:0x00ffe0, wireframe:true});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for (let i=0;i&lt;60;i++){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const m=new THREE.Mesh(geo,mat);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>m.position.set((Math.random()-.5)*20,(Math.random()-.5)*20,(Math.random()-.5)*20);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>scene.add(m);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>camera.position.z=8;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function animate(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>requestAnimationFrame(animate);</p>
+<p class="p1"><span class="Apple-converted-space">      </span>scene.rotation.x+=.0008; scene.rotation.y+=.0006;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderer.render(scene,camera);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>animate();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>addEventListener('resize',()=&gt;{</p>
+<p class="p1"><span class="Apple-converted-space">      </span>camera.aspect=innerWidth/innerHeight;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>camera.updateProjectionMatrix();</p>
+<p class="p1"><span class="Apple-converted-space">      </span>renderer.setSize(innerWidth,innerHeight);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>});</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- JS UTILS --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function toggleTheme(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.body.classList.toggle('light');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function scrollToSection(sel){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>document.querySelector(sel).scrollIntoView({behavior:'smooth'});</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>function searchPrompts(){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const q=document.getElementById('search').value;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>alert('Szukasz: '+q+' – w pełnej wersji trafia to do Netlify Function i Pinecone');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>// generuj fake karty promptów</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const top100=document.getElementById('top100');</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const categories=['Copy','Midjourney','Code','Marketing','Edu','Life'];</p>
+<p class="p1"><span class="Apple-converted-space">    </span>for(let i=0;i&lt;12;i++){</p>
+<p class="p1"><span class="Apple-converted-space">      </span>const div=document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space">      </span>div.className='card glass';</p>
+<p class="p1"><span class="Apple-converted-space">      </span>div.innerHTML=`</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;img src="data:image/svg+xml,${encodeURIComponent(`&lt;svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 225'&gt;&lt;rect width='400' height='225' fill='%23${Math.floor(Math.random()*16777215).toString(16)}'/&gt;&lt;text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='white' font-size='40'&gt;PROMPT ${i+1}&lt;/text&gt;&lt;/svg&gt;`)}"/&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="card-body"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;h3&gt;Ultra Prompt #${i+1}&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;p class="price"&gt;${(Math.random()*50+5).toFixed(2)} zł&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">          </span>&lt;button class="cta" style="width:100%;margin-top:.5rem"&gt;Kup teraz&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/div&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>top100.appendChild(div);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
